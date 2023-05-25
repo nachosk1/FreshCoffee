@@ -4,10 +4,11 @@ import { categories as categoriesDB } from '../data/categories'
 const KioskContext = createContext()
 
 const KioskProvider = ({ children }) => {
+    const scrollRef = useRef(null);
     const [categories, SetCategories] = useState(categoriesDB)
     const [categoryCurrent, setCategoryCurrent] = useState(categories[0])
     const [modal, setModal] = useState(false)
-    const scrollRef = useRef(null);
+    const [product, setProduct] = useState({})
 
     const handleClickCategory = id => {
         const category = categories.filter(category => category.id === id)[0]
@@ -17,7 +18,10 @@ const KioskProvider = ({ children }) => {
 
     const handleClickModal = () => {
         setModal(!modal)
-        
+    }
+
+    const handleSetProduct = product => {
+        setProduct(product)
     }
 
     return (
@@ -28,7 +32,9 @@ const KioskProvider = ({ children }) => {
                 handleClickCategory,
                 scrollRef,
                 handleClickModal,
-                modal
+                modal,
+                product,
+                handleSetProduct
             }}
         >{children}</KioskContext.Provider>
     )

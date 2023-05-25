@@ -2,7 +2,7 @@ import { formatMoney } from "../helpers";
 import useKiosk from "../hooks/useKiosk";
 
 const Product = ({ product }) => {
-    const {handleClickModal} = useKiosk()
+    const {handleClickModal, handleSetProduct} = useKiosk()
     const { name, price, image } = product;
 
     return (
@@ -19,6 +19,7 @@ const Product = ({ product }) => {
                     className="bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold"
                     onClick={() => {
                         handleClickModal()
+                        handleSetProduct(product)
                     }}
                 >
                     Agregar
