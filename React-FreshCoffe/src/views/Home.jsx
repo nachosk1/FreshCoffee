@@ -1,12 +1,18 @@
+import useSWR from 'swr'
 import Product from '../components/Product'
-import { products as data } from '../data/products'
 import useKiosk from '../hooks/useKiosk'
-
+import clientAxios from '../config/axios'
+import Spinner from '../components/Spinner'
 
 const Home = () => {
-  const {categoryCurrent} = useKiosk()
+  const { categoryCurrent } = useKiosk()
 
-  const product = data.filter(product => product.category_id === categoryCurrent.id)
+  //Consulta SWR
+  const fetcher = () => clientAxios('/api/products').then(data => data.data)
+  const { data, error, isLoading } = useSWR('/api/products', fetcher)
+  if(isLoading) return <Spinner />
+
+  const product = data.data.filter(product => product.category_id === categoryCurrent.id)
 
   return (
     <>
