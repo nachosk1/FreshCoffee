@@ -1,13 +1,13 @@
 import { createContext, useState, useRef, useEffect } from "react";
-import { categories as categoriesDB } from '../data/categories'
 import { toast } from "react-toastify";
+import clientAxios from '../config/axios'
 
 const KioskContext = createContext()
 
 const KioskProvider = ({ children }) => {
     const scrollRef = useRef(null);
-    const [categories, SetCategories] = useState(categoriesDB)
-    const [categoryCurrent, setCategoryCurrent] = useState(categories[0])
+    const [categories, SetCategories] = useState([])
+    const [categoryCurrent, setCategoryCurrent] = useState({})
     const [modal, setModal] = useState(false)
     const [product, setProduct] = useState({})
     const [order, setOrder] = useState([])
@@ -18,6 +18,21 @@ const KioskProvider = ({ children }) => {
         const newTotal = order.reduce((total, product) => (product.price * product.amount) + total, 0)
         setTotal(newTotal)
     }, [order])
+
+    const getCategory = async () => {
+        try {
+            const {data} = await clientAxios('/api/categories')
+            SetCategories(data.data)
+            setCategoryCurrent(data.data[0])
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        getCategory()
+    },[])
+
+
 
     const handleClickCategory = id => {
         const category = categories.filter(category => category.id === id)[0]
