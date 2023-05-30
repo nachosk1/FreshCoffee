@@ -1,10 +1,20 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { formatMoney } from "../helpers"
 import useKiosk from "../hooks/useKiosk"
 
 const ModalProduct = () => {
+    const { product, handleClickModal, handleAddOrder, order } = useKiosk()
     const [amount, setAmount] = useState(1)
-    const { product, handleClickModal } = useKiosk()
+    const [edition, setEdition] = useState(false)
+    
+    useEffect(() => {
+        if (order.some(orderState => orderState.id === product.id)) {
+            // si esta en el pedido
+            const productoEdition = order.filter( orderState => orderState.id === product.id )[0]
+            setAmount(productoEdition.amount)
+            setEdition(true)
+        }
+    }, [order])
 
     return (
         <div className="md:flex gap-10 ">
@@ -25,7 +35,7 @@ const ModalProduct = () => {
                     <button
                         type="button"
                         onClick={() => {
-                            if(amount <= 1) return
+                            if (amount <= 1) return
                             setAmount(amount - 1)
                         }}
                     >
@@ -38,7 +48,7 @@ const ModalProduct = () => {
                     <button
                         type="button"
                         onClick={() => {
-                            if(amount >= 5) return
+                            if (amount >= 5) return
                             setAmount(amount + 1)
                         }}
                     >
@@ -51,9 +61,13 @@ const ModalProduct = () => {
                 </div>
                 <button
                     type="button"
+                    onClick={() => {
+                        handleAddOrder({ ...product, amount })
+                        handleClickModal()
+                    }}
                     className="bg-indigo-600 hover:bg-indigo-800 px-5 py-2 mt-5 text-white font-bold uppercase rounded"
                 >
-                    Añadir al Pedido
+                    {edition ? 'Guardar Cambio' : 'Añadir al pedido'}
                 </button>
             </div>
         </div>

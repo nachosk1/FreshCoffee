@@ -1,5 +1,6 @@
-import { createContext, useState, useRef } from "react";
+import { createContext, useState, useRef, useEffect } from "react";
 import { categories as categoriesDB } from '../data/categories'
+import { toast } from "react-toastify";
 
 const KioskContext = createContext()
 
@@ -9,6 +10,14 @@ const KioskProvider = ({ children }) => {
     const [categoryCurrent, setCategoryCurrent] = useState(categories[0])
     const [modal, setModal] = useState(false)
     const [product, setProduct] = useState({})
+    const [order, setOrder] = useState([])
+    const [total, setTotal] = useState(0)
+
+    // cada vez que el pedido cambie va a calcular el total
+    useEffect(() => {
+        const newTotal = order.reduce((total, product) => (product.price * product.amount) + total, 0)
+        setTotal(newTotal)
+    }, [order])
 
     const handleClickCategory = id => {
         const category = categories.filter(category => category.id === id)[0]
@@ -24,6 +33,31 @@ const KioskProvider = ({ children }) => {
         setProduct(product)
     }
 
+    const handleAddOrder = ({category_id, ...product}) => {
+        
+        if (order.some(orderState => orderState.id === product.id)) {
+            // si esta en el pedido
+            const orderUpdate = order.map( orderState => orderState.id === product.id ? product : orderState)
+            toast.success('Guardado Correctamente')
+            setOrder(orderUpdate)
+        }else{  
+            setOrder([...order, product])  //de esta forma se puede agregar la informacion dentro de un arreglo sin que se convierta en un un objeto
+            toast.success('Agregado al pedido')
+        }
+    }
+
+    const handleEditAmount = id => {
+        const productUpdate = order.filter(product => product.id === id)[0]
+        setProduct(productUpdate)
+        setModal(!modal)
+    }
+
+    const handleDeleteProductOrder = id => {
+        const orderUpdate = order.filter(product => product.id !== id)
+        setOrder(orderUpdate)
+        toast.success('Eliminado del Pedido')
+    }
+
     return (
         <KioskContext.Provider
             value={{
@@ -34,7 +68,12 @@ const KioskProvider = ({ children }) => {
                 handleClickModal,
                 modal,
                 product,
-                handleSetProduct
+                handleSetProduct,
+                order,
+                handleAddOrder,
+                handleEditAmount,
+                handleDeleteProductOrder,
+                total
             }}
         >{children}</KioskContext.Provider>
     )

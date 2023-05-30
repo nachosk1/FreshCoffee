@@ -4,6 +4,8 @@ import useKiosk from '../hooks/useKiosk'
 import Sidebar from "../components/Sidebar"
 import Summary from "../components/Summary"
 import ModalProduct from "../components/ModalProduct"
+import { ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css'
 
 const customStyles = {
   content: {
@@ -19,8 +21,7 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 const Layout = () => {
-  const { scrollRef, modal, handleClickModal, product } = useKiosk()
-  console.log(product)
+  const { scrollRef, modal } = useKiosk()
   return (
     <>
       <div className="md:flex">
@@ -34,6 +35,8 @@ const Layout = () => {
       <Modal isOpen={modal} style={customStyles}>
         <ModalProduct />
       </Modal>
+
+      <ToastContainer />
     </>
   )
 }
