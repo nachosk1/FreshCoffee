@@ -1,13 +1,43 @@
-import React from 'react'
+import {createRef, useState} from 'react'
 import { Link } from 'react-router-dom'
+import clientAxios from '../config/axios'
+import Alert from '../components/alert'
 
 const Register = () => {
+    const nameRef = createRef()
+    const emailRef = createRef()
+    const passswordRef = createRef()
+    const passwordConfirmationRef = createRef()
+
+    const [errors, setErrors] = useState([])
+
+    const handleSubmit = async e => {
+        e.preventDefault()
+
+        const data = {
+            name: nameRef.current.value,
+            email: emailRef.current.value,
+            password: passswordRef.current.value,
+            password_confirmation: passwordConfirmationRef.current.value
+        }   
+        try {
+            const response = await clientAxios.post('api/register', data)
+            console.log(response)
+        } catch (error) {
+            setErrors(Object.values(error.response.data.errors))
+        }
+    }
+
     return (
         <>
             <h1 className='text-4xl font-black'>Crea tu Cuenta</h1>
             <p>Crea tu cuenta completando el formulario </p>
             <div className='bg-white shadow-md rounded-md mt-5 px-5 py-5'>
-                <form action="">
+                <form 
+                    onSubmit={handleSubmit}
+                    noValidate
+                >
+                    {errors ? errors.map((error, index) => <Alert key={index}>{error}</Alert>): null}
                     <div className='mb-4'>
                         <label
                             htmlFor="name"
@@ -19,6 +49,7 @@ const Register = () => {
                             className='mt-2 w-full p-3 bg-gray-50'
                             name='name'
                             placeholder='Tu nombre'
+                            ref={nameRef}
                         />
                     </div>
                     <div className='mb-4'>
@@ -32,6 +63,7 @@ const Register = () => {
                             className='mt-2 w-full p-3 bg-gray-50'
                             name='email'
                             placeholder='Tu Correo Electronico'
+                            ref={emailRef}
                         />
                     </div>
                     <div className='mb-4'>
@@ -45,6 +77,7 @@ const Register = () => {
                             className='mt-2 w-full p-3 bg-gray-50'
                             name='password'
                             placeholder='Tu Contraseña'
+                            ref={passswordRef}
                         />
                     </div>
                     <div className='mb-4'>
@@ -58,6 +91,7 @@ const Register = () => {
                             className='mt-2 w-full p-3 bg-gray-50'
                             name='password_confirmation'
                             placeholder='Repetir Contraseña'
+                            ref={passwordConfirmationRef}
                         />
                     </div>
                     <input
