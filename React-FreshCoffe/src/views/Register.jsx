@@ -21,7 +21,7 @@ const Register = () => {
             password_confirmation: passwordConfirmationRef.current.value
         }   
         try {
-            const response = await clientAxios.post('api/register', data)
+            const response = await clientAxios.post('/api/register', data)
             console.log(response)
         } catch (error) {
             setErrors(Object.values(error.response.data.errors))
