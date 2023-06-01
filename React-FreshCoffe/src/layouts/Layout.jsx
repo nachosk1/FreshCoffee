@@ -6,6 +6,7 @@ import Summary from "../components/Summary"
 import ModalProduct from "../components/ModalProduct"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
+import { useAuth } from "../hooks/useAuth"
 
 const customStyles = {
   content: {
@@ -21,7 +22,10 @@ const customStyles = {
 Modal.setAppElement('#root')
 
 const Layout = () => {
+
+  const {user, error} = useAuth({middleware: 'auth'})
   const { scrollRef, modal } = useKiosk()
+
   return (
     <>
       <div className="md:flex">

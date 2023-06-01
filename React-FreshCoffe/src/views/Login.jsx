@@ -1,13 +1,38 @@
-import { Link } from "react-router-dom"
-
+import { createRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import Alert from '../components/alert'
 
 const Login = () => {
+  const emailRef = createRef()
+  const passswordRef = createRef()
+
+  const [errors, setErrors] = useState([])
+  const {login} = useAuth({
+    middleware: 'guest',
+    url: '/'
+  })
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    const datas = {
+      email: emailRef.current.value,
+      password: passswordRef.current.value
+    }
+    login(datas, setErrors)
+  }
+
   return (
     <>
       <h1 className='text-4xl font-black'>Iniciar Sesión</h1>
       <p>Para crear un pedido debes iniciar sesión </p>
       <div className='bg-white shadow-md rounded-md mt-5 px-5 py-5'>
-        <form action="">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          {errors ? errors.map((error, index) => <Alert key={index}>{error}</Alert>) : null}
           <div className='mb-4'>
             <label
               htmlFor="email"
@@ -19,6 +44,7 @@ const Login = () => {
               className='mt-2 w-full p-3 bg-gray-50'
               name='email'
               placeholder='Tu Correo Electronico'
+              ref={emailRef}
             />
           </div>
           <div className='mb-4'>
@@ -32,6 +58,7 @@ const Login = () => {
               className='mt-2 w-full p-3 bg-gray-50'
               name='password'
               placeholder='Tu Contraseña'
+              ref={passswordRef}
             />
           </div>
           <input
@@ -42,7 +69,7 @@ const Login = () => {
         </form>
       </div>
       <nav className='mt-5'>
-        <Link 
+        <Link
           to='/auth/register'
           className="text-indigo-400 font-medium"
         >
