@@ -20,8 +20,13 @@ const KioskProvider = ({ children }) => {
     }, [order])
 
     const getCategory = async () => {
+        const token = localStorage.getItem('AUTH_TOKEN')
         try {
-            const { data } = await clientAxios('/api/categories')
+            const { data } = await clientAxios('/api/categories', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             SetCategories(data.data)
             setCategoryCurrent(data.data[0])
         } catch (error) {
@@ -76,7 +81,7 @@ const KioskProvider = ({ children }) => {
     const handleSubmitNewOrder = async () => {
         const token = localStorage.getItem('AUTH_TOKEN')
         try {
-            const {data} =  await clientAxios.post('/api/order', {
+            const { data } = await clientAxios.post('/api/orders', {
                 total,
                 products: order.map(product => {
                     return {
@@ -93,6 +98,32 @@ const KioskProvider = ({ children }) => {
             setTimeout(() => {
                 setOrder([])
             }, 1000)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    const handleClickCompleteOrder = async id => {
+        const token = localStorage.getItem('AUTH_TOKEN')
+        try {
+            await clientAxios.put(`/api/orders/${id}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleClickOutOfStock  = async id => {
+        const token = localStorage.getItem('AUTH_TOKEN')
+        try {
+            await clientAxios.put(`/api/products/${id}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
         } catch (error) {
             console.log(error)
         }
@@ -114,7 +145,9 @@ const KioskProvider = ({ children }) => {
                 handleEditAmount,
                 handleDeleteProductOrder,
                 total,
-                handleSubmitNewOrder
+                handleSubmitNewOrder,
+                handleClickCompleteOrder,
+                handleClickOutOfStock
             }}
         >{children}</KioskContext.Provider>
     )

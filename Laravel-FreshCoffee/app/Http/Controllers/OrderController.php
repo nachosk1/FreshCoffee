@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderCollection;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        return new OrderCollection(Order::with('user')->with('products')->where('state', 0)->get());
     }
 
     /**
@@ -39,7 +40,7 @@ class OrderController extends Controller
         // Formatear un arreglo
         $order_product = [];
 
-        foreach($products as $product){
+        foreach ($products as $product) {
             $order_product[] = [
                 'order_id' => $id,
                 'product_id' => $product['id'],
@@ -53,7 +54,7 @@ class OrderController extends Controller
         OrderProduct::insert($order_product);
 
         return [
-            'message' => 'Pedido Realizado correctamente, estará listo en unos minutos' 
+            'message' => 'Pedido Realizado correctamente, estará listo en unos minutos'
         ];
     }
 
@@ -70,7 +71,12 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+        $order->state = 1;
+        $order->save();
+
+        return [
+            'order' => $order
+        ];
     }
 
     /**

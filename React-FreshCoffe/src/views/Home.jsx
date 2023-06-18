@@ -8,9 +8,14 @@ const Home = () => {
   const { categoryCurrent } = useKiosk()
 
   //Consulta SWR
-  const fetcher = () => clientAxios('/api/products').then(data => data.data)
+  const token = localStorage.getItem('AUTH_TOKEN')
+  const fetcher = () => clientAxios('/api/products', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).then(data => data.data)
   const { data, error, isLoading } = useSWR('/api/products', fetcher)
-  if(isLoading) return <Spinner />
+  if (isLoading) return <Spinner />
 
   const products = data.data.filter(product => product.category_id === categoryCurrent.id)
 
@@ -24,6 +29,7 @@ const Home = () => {
           <Product
             key={product.image}
             product={product}
+            buttonAdd={true}
           />
         ))}
       </div>

@@ -7,19 +7,20 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::post('/logout', [AuthController::class, 'logout']);  
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     // Almacenar Ordener
-    Route::apiResource('/order', OrderController::class);
+    Route::apiResource('/orders', OrderController::class);
+    Route::apiResource('/categories', CategoryController::class);
+    Route::apiResource('/products', ProductController::class);
 });
 
-Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/products', ProductController::class);
+
 
 // Autenticacion
-Route::post('/register', [AuthController::class, 'register']);  
-Route::post('/login', [AuthController::class, 'login']);  
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
