@@ -4,8 +4,14 @@ import SummaryProduct from "./SummaryProduct"
 
 
 const Summary = () => {
-  const { order, total } = useKiosk()
+  const { order, total, handleSubmitNewOrder } = useKiosk()
   const testOrder = () => order.length === 0  //true o false si existe un pedido
+
+  const handleSubmit = e => {
+    e.preventDefault()
+
+    handleSubmitNewOrder()
+  }
 
   return (
     <aside className="w-72 h-screen overflow-y-scroll p-5">
@@ -32,7 +38,10 @@ const Summary = () => {
           Total: {''}
           {formatMoney(total)}
         </p>
-        <form action="" className="w-full">
+        <form 
+          className="w-full"
+          onSubmit={handleSubmit}
+        >
           <div className="mt-5">
             <input
               type="submit"

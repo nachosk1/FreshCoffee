@@ -21,7 +21,7 @@ const KioskProvider = ({ children }) => {
 
     const getCategory = async () => {
         try {
-            const {data} = await clientAxios('/api/categories')
+            const { data } = await clientAxios('/api/categories')
             SetCategories(data.data)
             setCategoryCurrent(data.data[0])
         } catch (error) {
@@ -30,7 +30,7 @@ const KioskProvider = ({ children }) => {
     }
     useEffect(() => {
         getCategory()
-    },[])
+    }, [])
 
 
 
@@ -48,14 +48,14 @@ const KioskProvider = ({ children }) => {
         setProduct(product)
     }
 
-    const handleAddOrder = ({category_id, ...product}) => {
-        
+    const handleAddOrder = ({ category_id, ...product }) => {
+
         if (order.some(orderState => orderState.id === product.id)) {
             // si esta en el pedido
-            const orderUpdate = order.map( orderState => orderState.id === product.id ? product : orderState)
+            const orderUpdate = order.map(orderState => orderState.id === product.id ? product : orderState)
             toast.success('Guardado Correctamente')
             setOrder(orderUpdate)
-        }else{  
+        } else {
             setOrder([...order, product])  //de esta forma se puede agregar la informacion dentro de un arreglo sin que se convierta en un un objeto
             toast.success('Agregado al pedido')
         }
@@ -73,6 +73,31 @@ const KioskProvider = ({ children }) => {
         toast.success('Eliminado del Pedido')
     }
 
+    const handleSubmitNewOrder = async () => {
+        const token = localStorage.getItem('AUTH_TOKEN')
+        try {
+            const {data} =  await clientAxios.post('/api/order', {
+                total,
+                products: order.map(product => {
+                    return {
+                        id: product.id,
+                        amount: product.amount
+                    }
+                })
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            toast.success(data.message);
+            setTimeout(() => {
+                setOrder([])
+            }, 1000)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <KioskContext.Provider
             value={{
@@ -88,7 +113,8 @@ const KioskProvider = ({ children }) => {
                 handleAddOrder,
                 handleEditAmount,
                 handleDeleteProductOrder,
-                total
+                total,
+                handleSubmitNewOrder
             }}
         >{children}</KioskContext.Provider>
     )

@@ -12,7 +12,7 @@ const Home = () => {
   const { data, error, isLoading } = useSWR('/api/products', fetcher)
   if(isLoading) return <Spinner />
 
-  const product = data.data.filter(product => product.category_id === categoryCurrent.id)
+  const products = data.data.filter(product => product.category_id === categoryCurrent.id)
 
   return (
     <>
@@ -20,7 +20,7 @@ const Home = () => {
       <p className='text-2xl my-10'>Elige y personaliza tu pedido a continuación.</p>
 
       <div className='grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-        {product.map(product => (
+        {products.map(product => (
           <Product
             key={product.image}
             product={product}
